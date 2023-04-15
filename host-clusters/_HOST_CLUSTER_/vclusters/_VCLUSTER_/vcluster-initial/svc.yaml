@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  {{printf "svc-%s" .Vcluster.Name}}
+  namespace: {{.Vcluster.Namespace}}
+spec:
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+    nodePort: {{.Vcluster.HttpsNodePort}}
+  selector:
+    app: vcluster
+  sessionAffinity: None
+  type: NodePort

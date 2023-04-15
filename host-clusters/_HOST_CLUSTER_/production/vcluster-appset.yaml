@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{printf "%s-vcluster-appset" .Vcluster.HostCluster.Name}}
+spec:
+  generators:
+  - list:
+      elements:
+      {{- range $index, $name := .VclusterNames }}
+      - cluster: {{ $name }}
+      {{- end}}      
+  template:
+    metadata:
+      name: '{{"{{cluster}}"}}'
+    spec:
+      project: {{.NautesConfigs.TenantName}}
+      source:
+        path: host-clusters/{{.Vcluster.HostCluster.Name}}/vclusters/{{printf "%s" "{{cluster}}"}}
+        repoURL: {{.RepoURL}}
+        targetRevision: HEAD
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true

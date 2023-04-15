@@ -1,0 +1,72 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{printf "%s-vcluster-app" .Vcluster.Name}}
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io  
+spec:
+  project: {{.NautesConfigs.TenantName}}
+  source:
+    chart: vcluster
+    repoURL: https://charts.loft.sh
+    targetRevision: 0.10.1
+    helm:
+      values: |-
+        vcluster:
+          image: rancher/k3s:v1.21.13-k3s1
+          extraArgs:
+            - --kube-apiserver-arg=oidc-issuer-url={{.OauthConfigs.Issuer}}
+            - --kube-apiserver-arg=oidc-client-id={{.OauthConfigs.ClientID}}
+            - --kube-apiserver-arg=oidc-ca-file=/etc/ssl/certs/ca.crt
+            - --kube-apiserver-arg=oidc-groups-claim=groups
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: etc-ssl-certs
+              mountPath: /etc/ssl/certs/ca.crt
+              subPath: ca.crt
+              readOnly: true
+        volumes:
+          - name: etc-ssl-certs
+            secret:
+              secretName: ca
+        sync:
+          ingresses:
+            enabled: true
+        syncer:
+          extraArgs:
+          - --tls-san={{.Vcluster.TlsSan}}
+        init:
+          manifests: |-
+            ---
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: vault
+            ---
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+              name: vault-auth
+              namespace: vault
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1beta1
+            kind: ClusterRoleBinding
+            metadata:
+              name: role-tokenreview-binding
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: system:auth-delegator
+            subjects:
+              - kind: ServiceAccount
+                name: vault-auth
+                namespace: vault            
+  destination:
+    server: {{.Vcluster.HostCluster.ApiServer}}
+    namespace: {{.Vcluster.Namespace }}
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true

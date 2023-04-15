@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  project: {{.Runtime.ArgocdProject}}
+  source:
+    chart: vault
+    repoURL: https://helm.releases.hashicorp.com/
+    targetRevision: 0.20.1
+    helm:
+      values: |-
+        global:
+          enabled: false
+        injector:
+          enabled: true
+          authPath: {{printf "auth/%s" .Runtime.Name}}
+          externalVaultAddr: {{.SecretConfigs.Vault.Addr}}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault
+  ignoreDifferences:
+  - group: "admissionregistration.k8s.io"
+    kind: "MutatingWebhookConfiguration"
+    jsonPointers:
+    - /webhooks/0/clientConfig/caBundle
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true

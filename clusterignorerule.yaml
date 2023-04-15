@@ -1,0 +1,54 @@
+save:
+  hostCluster:
+    ignorePath:
+    - runtimes
+    - vclusters
+    ignoreFile:
+    - vcluster-appset.yaml
+    - runtime-appset.yaml
+    - runtime-argocd-appset.yaml
+    - runtime-initial-appset.yaml
+  physicalRuntime:
+    ignorePath:
+    - host-clusters
+    ignoreFile:
+    - host-cluster-appset.yaml
+  virtualRuntime:
+    ignoreFile:
+    - host-cluster-appset.yaml
+    - traefik-app.yaml
+    - traefik-resources-app.yaml
+    - traefik-servers-transport.yaml
+    - rbac-vault.yaml
+remove:
+  hostCluster:
+    ignorePath:
+    - host-clusters
+    - runtimes
+    ignoreFile:
+    - runtime-appset.yaml
+    - runtime-argocd-appset.yaml
+    - runtime-initial-appset.yaml
+  physicalRuntime:
+    ignorePath:
+    - host-clusters
+    - runtimes
+    ignoreFile:
+    - host-cluster-appset.yaml
+  virtualRuntime:
+    ignorePath:
+    - vclusters
+    - runtimes  
+    ignoreFile:
+    - host-cluster-appset.yaml
+    - traefik-app.yaml
+    - traefik-resources-app.yaml
+common:
+  ignorePath:
+  - .git
+  ignoreFile:
+  - clusterignorerule.yaml
+  - .gitignore
+  - .gitkeep
+
+

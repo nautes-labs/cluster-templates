@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: host-cluster-appset
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      {{- range $index, $name := .HostClusterNames }}
+      - cluster: {{ $name }}
+      {{- end}}
+  template:
+    metadata:
+      name: '{{"{{cluster}}"}}'
+    spec:
+      project: {{.NautesConfigs.TenantName}}
+      source:
+        repoURL: {{.RepoURL}}
+        targetRevision: HEAD
+        path: host-clusters/{{printf "%s" "{{cluster}}"}}/production
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true

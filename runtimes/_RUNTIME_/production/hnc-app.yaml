@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hnc
+  namespace: argocd
+spec:
+  project: {{.Runtime.ArgocdProject}}
+  source:
+    path: hnc/overlays/production
+    repoURL: {{.RepoURL}}
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

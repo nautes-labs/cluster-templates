@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nautes-configs
+  namespace: nautes
+data:
+  config: |
+    git:
+      addr: "{{.GitConfigs.Addr}}"
+      defaultDeployKeyType: "{{.GitConfigs.DefaultDeployKeyType}}"
+      gitType: {{.GitConfigs.GitType}}
+    secret:
+      vault:
+        mountPath: "{{.Runtime.MountPath}}"
+        addr: "{{.SecretConfigs.Vault.Addr}}"
+        CABundle: |
+{{- range $line := split .SecretConfigs.Vault.CABundle "\n" }}
+          {{ $line | html }}
+{{- end }}
