@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: {{.Runtime.ArgocdProject}}
+  name: {{.Runtime.ArgocdConfig.Project}}
   namespace: argocd
 spec:
   description: "production project"

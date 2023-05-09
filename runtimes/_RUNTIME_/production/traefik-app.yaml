@@ -1,16 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{printf "%s-traefik" .Runtime.Name}}
+  name: traefik
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdProject}}
+  project: {{.Runtime.ArgocdConfig.Project}}
   source:
     chart: traefik
     repoURL: https://helm.traefik.io/traefik
     targetRevision: v10.22.0
     helm:
       values: |-
+        service:
+          type: NodePort
+          annotations:
+            "cluster-operator.nautes.io/http-entrypoint": "web"
+            "cluster-operator.nautes.io/https-entrypoint": "websecure"
+          labels:
+            "resource.nautes.io/Usage": "Entrypoint"      
         ports:
           traefik:
             port: 9000
@@ -24,6 +31,9 @@ spec:
           kubernetesIngress:
             publishedService:
               enabled: true
+          kubernetesCRD:
+            allowCrossNamespace: true
+            
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik

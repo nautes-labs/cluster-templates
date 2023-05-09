@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   rules:
-  - host: {{.Runtime.Argocd.Host}}
+  - host: {{.Runtime.ArgocdConfig.Host}}
     http:
       paths:
       - path: /

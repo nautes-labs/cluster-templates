@@ -1,0 +1,14 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: oauth-forward
+  namespace: traefik
+spec:
+  forwardAuth:
+    address: {{printf "http://%s-oauth2-proxy.oauth2-proxy/oauth2/auth" .HostCluster.Name}}
+    trustForwardHeader: true
+    authResponseHeaders:
+      - "X-Forwarded-User"
+      - "Authorization"
+---

@@ -4,7 +4,7 @@ metadata:
   name: {{printf "%s-app" .Runtime.Name}}
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdProject}}
+  project: {{.Runtime.ArgocdConfig.Project}}
   source:
     path: runtimes/{{.Runtime.Name}}/production
     repoURL: {{.RepoURL}}

@@ -4,7 +4,7 @@ metadata:
   name: hnc
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdProject}}
+  project: {{.Runtime.ArgocdConfig.Project}}
   source:
     path: hnc/overlays/production
     repoURL: {{.RepoURL}}

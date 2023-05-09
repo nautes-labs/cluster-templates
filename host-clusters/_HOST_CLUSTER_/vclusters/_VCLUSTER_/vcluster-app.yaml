@@ -36,7 +36,7 @@ spec:
             enabled: true
         syncer:
           extraArgs:
-          - --tls-san={{.Vcluster.TlsSan}}
+          - --tls-san={{.Vcluster.TLSSan}}
         init:
           manifests: |-
             ---

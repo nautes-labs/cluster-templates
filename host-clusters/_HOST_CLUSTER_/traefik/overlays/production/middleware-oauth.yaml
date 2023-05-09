@@ -1,0 +1,29 @@
+{{- range .HostCluster.ProjectPipelineItems }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: oauth-{{.Name}}
+  namespace: traefik
+spec:
+  chain:
+    middlewares:
+    - name: oauth-errors-{{.Name}}
+    - name: oauth-forward
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: oauth-errors-{{.Name}}
+  namespace: traefik
+spec:
+  errors:
+    status:
+      - "401"
+    service:
+      name: {{.HostClusterName}}-oauth2-proxy
+      namespace: oauth2-proxy
+      port: 80
+    query: {{printf "/oauth2/sign_in?rd=%s" .TektonConfig.URL}}
+{{- end}}
+

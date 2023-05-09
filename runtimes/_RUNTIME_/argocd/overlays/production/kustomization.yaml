@@ -7,4 +7,5 @@ resources:
 patchesStrategicMerge:
 - patch-argocd-cm.yaml
 - patch-argocd-dex-server.yaml
+- patch-argocd-tls-certs-cm.yaml
 namespace: argocd

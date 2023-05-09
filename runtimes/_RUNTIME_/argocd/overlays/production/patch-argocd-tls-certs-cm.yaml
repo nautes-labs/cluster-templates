@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+data:
+  gitlab.bluzin.io: |-
+  {{- range $line := split .SecretConfigs.Vault.CABundle "\n" }}
+    {{ $line | html }}
+  {{- end }}
+kind: ConfigMap
+metadata:
+  name: argocd-tls-certs-cm
