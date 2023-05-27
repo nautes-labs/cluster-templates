@@ -6,7 +6,7 @@ metadata:
 spec:
   project: {{.HostCluster.ArgocdProject}}
   source:
-    path: traefik/overlays/production
+    path: host-clusters/{{.HostCluster.Name}}/traefik/overlays/production
     repoURL: {{.RepoURL}}
     targetRevision: HEAD
   destination:

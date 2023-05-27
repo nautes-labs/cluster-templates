@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name:  traefik-resources
+  name: {{printf "%s-oauth2-proxy-resources" .HostCluster.Name}}
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.HostCluster.ArgocdProject}}
   source:
-    path: runtimes/{{.Runtime.Name}}/traefik/overlays/production
+    path: host-clusters/{{.HostCluster.Name}}/oauth2-proxy/overlays/production
     repoURL: {{.RepoURL}}
     targetRevision: HEAD
   destination:
-    server: https://kubernetes.default.svc
-    namespace: traefik
+    server: {{.HostCluster.ApiServer}}
+    namespace: oauth2-proxy
   syncPolicy:
     automated:
       selfHeal: true

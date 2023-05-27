@@ -11,6 +11,13 @@ spec:
     targetRevision: v10.22.0
     helm:
       values: |-
+        service:
+          type: NodePort
+          annotations:
+            "cluster-operator.nautes.io/http-entrypoint": "web"
+            "cluster-operator.nautes.io/https-entrypoint": "websecure"
+          labels:
+            "resource.nautes.io/Usage": "Entrypoint"       
         ports:
           traefik:
             port: 9000
@@ -24,6 +31,9 @@ spec:
           kubernetesIngress:
             publishedService:
               enabled: true
+          kubernetesCRD:
+            allowCrossNamespace: true
+
   destination:
     server: {{.HostCluster.ApiServer}}
     namespace: traefik

@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name:  traefik-resources
+  name: tekton
   namespace: argocd
 spec:
   project: {{.Runtime.ArgocdConfig.Project}}
   source:
-    path: runtimes/{{.Runtime.Name}}/traefik/overlays/production
+    path: runtimes/{{.Runtime.Name}}/tekton/overlays/production
     repoURL: {{.RepoURL}}
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: traefik
+    namespace: tekton-pipelines
   syncPolicy:
     automated:
       selfHeal: true

@@ -1,17 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name:  traefik-resources
+  name: argo-events
   namespace: argocd
 spec:
   project: {{.Runtime.ArgocdConfig.Project}}
   source:
-    path: runtimes/{{.Runtime.Name}}/traefik/overlays/production
+    path: runtimes/{{.Runtime.Name}}/argoevents/overlays/production
     repoURL: {{.RepoURL}}
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: traefik
   syncPolicy:
     automated:
       selfHeal: true

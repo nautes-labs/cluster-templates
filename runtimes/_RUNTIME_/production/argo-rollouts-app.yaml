@@ -4,7 +4,7 @@ metadata:
   name: argo-rollouts
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdProject }}
+  project: {{.Runtime.ArgocdConfig.Project}}
   source:
     path: argorollouts/overlays/production
     repoURL: {{.RepoURL}}
