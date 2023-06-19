@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nautes-configs
-  namespace: nautes
+  namespace: {{.NautesConfigs.Namespace}}
 data:
   config: |
     git:
