@@ -1,7 +1,7 @@
 # Cluster Templates
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![version](https://img.shields.io/badge/version-v0.3.2-green)]()
+[![version](https://img.shields.io/badge/version-v0.3.5-green)]()
 
 Cluster Templates 提供了向租户管理集群注册运行时集群时所需的一组模板文件，支持的集群类型包括：宿主集群、物理运行时集群、虚拟运行时集群。
 
