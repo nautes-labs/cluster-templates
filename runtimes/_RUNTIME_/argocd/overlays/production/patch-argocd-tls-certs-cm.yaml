@@ -2,7 +2,7 @@
 apiVersion: v1
 data:
   {{getDomain .GitConfigs.Addr}}: |-
-  {{- range $line := split .SecretConfigs.Vault.CABundle "\n" }}
+  {{- range $line := split .CaBundleList.Gitlab "\n" }}
     {{ $line | html }}
   {{- end }}
 kind: ConfigMap
