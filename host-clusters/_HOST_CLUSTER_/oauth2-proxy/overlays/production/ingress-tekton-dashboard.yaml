@@ -1,22 +1,25 @@
+{{- range .HostCluster.ProjectPipelineItems }}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: tekton-dashborard
+  name: {{printf "%s-tekton-dashboard" .Name}}
   namespace: oauth2-proxy
   annotations:
     kubernetes.io/ingress.class: "traefik"
 spec:
   tls:
   - hosts:
-    - {{.Runtime.TektonConfig.Host}}
+    - {{.TektonConfig.Host}}
   rules:
-  - host: {{.Runtime.TektonConfig.Host}}
+  - host: {{.TektonConfig.Host}}
     http:
       paths:
       - path: /oauth2
         pathType: ImplementationSpecific
         backend:
           service:
-            name: oauth2-proxy
+            name: {{.HostClusterName}}-oauth2-proxy
             port:
               number: 80
+{{- end}}
