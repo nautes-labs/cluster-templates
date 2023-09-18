@@ -4,10 +4,10 @@ metadata:
   name: argo-events
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
-    path: runtimes/{{.Runtime.Name}}/argoevents/overlays/production
-    repoURL: {{.RepoURL}}
+    path: runtimes/{{.Cluster.ObjectMeta.Name}}-runtime/argoevents/overlays/production
+    repoURL: {{.Repo.TenantRepoURL}}
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc

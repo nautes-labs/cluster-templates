@@ -1,4 +1,6 @@
-{{- range .HostCluster.ProjectPipelineItems }}
+{{- $hostClusterName := .Cluster.ObjectMeta.Name -}}
+{{- $data := getOauthProxyServer . }}
+{{- range $data.OAuth2Proxy.Ingresses -}}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -10,16 +12,16 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{.TektonConfig.Host}}
+    - {{.Host}}
   rules:
-  - host: {{.TektonConfig.Host}}
+  - host: {{.Host}}
     http:
       paths:
       - path: /oauth2
         pathType: ImplementationSpecific
         backend:
           service:
-            name: {{.HostClusterName}}-oauth2-proxy
+            name: {{$hostClusterName}}-oauth2-proxy
             port:
               number: 80
-{{- end}}
+{{- end -}}

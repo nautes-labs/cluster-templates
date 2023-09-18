@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name:  {{printf "%s-vcluster-initial" .Vcluster.Name}}
+  name:  {{printf "%s-vcluster-initial" .Cluster.ObjectMeta.Name}}
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io  
 spec:
   project: {{.NautesConfigs.TenantName}}
   source:
-    path: host-clusters/{{.Vcluster.HostCluster.Name}}/vclusters/{{.Vcluster.Name}}/vcluster-initial
-    repoURL: {{.RepoURL}}
+    path: host-clusters/{{.HostCluster.ObjectMeta.Name}}/vclusters/{{.Cluster.ObjectMeta.Name}}/vcluster-initial
+    repoURL: {{.Repo.TenantRepoURL}}
     targetRevision: HEAD
   destination:
-    server: {{.Vcluster.HostCluster.ApiServer}}
+    server: {{.HostCluster.Spec.ApiServer}}
   syncPolicy:
     automated:
       selfHeal: true

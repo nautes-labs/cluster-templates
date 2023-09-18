@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{printf "%s-app" .Runtime.Name}}
+  name: {{printf "%s-runtime-app" .Cluster.ObjectMeta.Name}}
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
-    path: runtimes/{{.Runtime.Name}}/production
-    repoURL: {{.RepoURL}}
+    path: runtimes/{{.Cluster.ObjectMeta.Name}}-runtime/production
+    repoURL: {{.Repo.TenantRepoURL}}
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc

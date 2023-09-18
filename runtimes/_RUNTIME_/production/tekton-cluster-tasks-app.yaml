@@ -4,7 +4,7 @@ metadata:
   name: tekton-cluster-tasks
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
     path: task
     repoURL: https://github.com/nautes-labs/tekton-catalog.git

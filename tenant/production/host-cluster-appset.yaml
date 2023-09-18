@@ -7,8 +7,10 @@ spec:
   generators:
   - list:
       elements:
-      {{- range $index, $name := .HostClusterNames }}
-      - cluster: {{ $name }}
+      {{- range .Clusters }}
+      {{- if eq .Spec.Usage "host"}}
+      - cluster: {{ .ObjectMeta.Name }}
+      {{- end}}
       {{- end}}
   template:
     metadata:
@@ -16,7 +18,7 @@ spec:
     spec:
       project: {{.NautesConfigs.TenantName}}
       source:
-        repoURL: {{.RepoURL}}
+        repoURL: {{.Repo.TenantRepoURL}}
         targetRevision: HEAD
         path: host-clusters/{{printf "%s" "{{cluster}}"}}/production
       destination:

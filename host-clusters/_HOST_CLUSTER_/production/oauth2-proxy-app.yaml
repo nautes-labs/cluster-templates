@@ -1,10 +1,13 @@
+{{- $hostClusterName := "" -}}
+{{- if eq .Cluster.Spec.Usage "host" }}
+{{- $data := getOauthProxyServer .}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{printf "%s-oauth2-proxy" .HostCluster.Name}}
+  name: {{printf "%s-oauth2-proxy" .Cluster.ObjectMeta.Name}}
   namespace: argocd
 spec:
-  project: {{.HostCluster.ArgocdProject}}
+  project: {{.NautesConfigs.TenantName}}
   source:
     chart: oauth2-proxy
     repoURL: https://oauth2-proxy.github.io/manifests
@@ -18,10 +21,10 @@ spec:
         extraArgs:
           provider: "oidc"
           provider-display-name: "Dex"
-          whitelist-domain: "{{printf ".%s:%s" .HostCluster.PrimaryDomain .Traefik.HttpsNodePort}}"
+          whitelist-domain: "{{$data.OAuth2Proxy.WhitelistDomain}}"
           cookie-secure: "true"
-          cookie-domain: "{{printf ".%s" .HostCluster.PrimaryDomain}}"
-          redirect-url: {{printf "https://auth.%s.%s:%s/oauth2/callback" .HostCluster.Name .HostCluster.PrimaryDomain .Traefik.HttpsNodePort}}
+          cookie-domain: "{{printf ".%s" .Cluster.Spec.PrimaryDomain}}"
+          redirect-url: {{ $data.OAuth2Proxy.Redirect }}
           cookie-secret: "{{randomString 32}}"
           oidc-issuer-url: "{{.OauthConfigs.Issuer}}"
           scope: "openid profile email groups"
@@ -35,11 +38,11 @@ spec:
             kubernetes.io/ingress.class: traefik
           tls:
             - hosts:
-                - {{printf "auth.%s.%s" .HostCluster.Name .HostCluster.PrimaryDomain}}
+                - {{$data.OAuth2Proxy.Hosts}}
           path: /
           pathType: ImplementationSpecific
           hosts:
-            - {{printf "auth.%s.%s" .HostCluster.Name .HostCluster.PrimaryDomain}}
+            - {{$data.OAuth2Proxy.Hosts}}
 
         extraVolumes:
           - name: ca-bundle-cert
@@ -50,7 +53,7 @@ spec:
           - mountPath: /etc/ssl/certs/
             name: ca-bundle-cert
   destination:
-    server: {{.HostCluster.ApiServer}}
+    server: {{.Cluster.Spec.ApiServer}}
     namespace: oauth2-proxy
   syncPolicy:
     automated:
@@ -58,3 +61,4 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
+{{- end}}

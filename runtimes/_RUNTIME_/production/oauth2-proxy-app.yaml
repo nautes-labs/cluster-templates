@@ -1,10 +1,11 @@
+{{- $data := getOauthProxyServer .}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: oauth2-proxy
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
     chart: oauth2-proxy
     repoURL: https://oauth2-proxy.github.io/manifests
@@ -18,10 +19,10 @@ spec:
         extraArgs:
           provider: "oidc"
           provider-display-name: "Dex"
-          whitelist-domain: "{{printf ".%s:%s" .Runtime.PrimaryDomain .Traefik.HttpsNodePort}}"
+          whitelist-domain: "{{$data.OAuth2Proxy.WhitelistDomain}}"
           cookie-secure: "true"
-          cookie-domain: "{{printf ".%s" .Runtime.PrimaryDomain}}"
-          redirect-url: {{printf "https://auth.%s.%s:%s/oauth2/callback" .Runtime.ClusterName .Runtime.PrimaryDomain .Traefik.HttpsNodePort}}
+          cookie-domain: "{{printf ".%s" .Cluster.Spec.PrimaryDomain}}"
+          redirect-url: {{ $data.OAuth2Proxy.Redirect }}
           cookie-secret: "{{randomString 32}}"
           oidc-issuer-url: "{{.OauthConfigs.Issuer}}"
           scope: "openid profile email groups"
@@ -35,11 +36,11 @@ spec:
             kubernetes.io/ingress.class: traefik
           tls:
             - hosts:
-                - {{printf "auth.%s.%s" .Runtime.ClusterName .Runtime.PrimaryDomain}}
+                - {{$data.OAuth2Proxy.Hosts}}
           path: /
           pathType: ImplementationSpecific
           hosts:
-            - {{printf "auth.%s.%s" .Runtime.ClusterName .Runtime.PrimaryDomain}}
+            - {{$data.OAuth2Proxy.Hosts}}
 
         extraVolumes:
           - name: ca-bundle-cert

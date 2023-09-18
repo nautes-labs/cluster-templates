@@ -3,6 +3,6 @@ kind: Kustomization
 resources:
 - ../../../../../nautes/overlays/runtime
 - cm-nautes.yaml
-{{- if eq .Runtime.Type "physical"}}
+{{- if eq .Cluster.Spec.ClusterType "physical"}}
 - rbac-vault.yaml
 {{end -}}
