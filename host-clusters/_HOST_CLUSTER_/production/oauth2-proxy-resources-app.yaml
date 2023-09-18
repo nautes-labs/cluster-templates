@@ -1,16 +1,17 @@
+{{- if eq .Cluster.Spec.ClusterType "physical" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{printf "%s-oauth2-proxy-resources" .HostCluster.Name}}
+  name: {{printf "%s-oauth2-proxy-resources" .Cluster.ObjectMeta.Name}}
   namespace: argocd
 spec:
-  project: {{.HostCluster.ArgocdProject}}
+  project: {{.NautesConfigs.TenantName}}
   source:
-    path: host-clusters/{{.HostCluster.Name}}/oauth2-proxy/overlays/production
-    repoURL: {{.RepoURL}}
+    path: host-clusters/{{.Cluster.ObjectMeta.Name}}/oauth2-proxy/overlays/production
+    repoURL: {{.Repo.TenantRepoURL}}
     targetRevision: HEAD
   destination:
-    server: {{.HostCluster.ApiServer}}
+    server: {{.Cluster.Spec.ApiServer}}
     namespace: oauth2-proxy
   syncPolicy:
     automated:
@@ -18,3 +19,4 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
+{{- end}}

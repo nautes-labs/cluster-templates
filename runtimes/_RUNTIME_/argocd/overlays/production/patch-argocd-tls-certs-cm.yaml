@@ -1,8 +1,12 @@
+{{- $data := "" -}}
+{{- if ne .Cert nil -}}
+    {{- $data = .Cert.Gitlab -}}
+{{- end -}}
 ---
 apiVersion: v1
 data:
   {{getDomain .GitConfigs.Addr}}: |-
-  {{- range $line := split .CaBundleList.Gitlab "\n" }}
+  {{- range $line := split $data "\n" }}
     {{ $line | html }}
   {{- end }}
 kind: ConfigMap

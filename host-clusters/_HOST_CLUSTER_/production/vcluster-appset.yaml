@@ -1,13 +1,18 @@
+{{- $hostClusterName := .Cluster.ObjectMeta.Name -}}
+{{- $vclusters := getVclusterByHostCluserName . $hostClusterName -}}
+{{- if gt (len $vclusters) 0 -}}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{printf "%s-vcluster-appset" .Vcluster.HostCluster.Name}}
+  name: {{printf "%s-vcluster-appset" $hostClusterName}}
 spec:
   generators:
   - list:
       elements:
-      {{- range $index, $name := .VclusterNames }}
-        - cluster: {{ $name }}
+      {{- range .Clusters }}
+        {{- if eq .Spec.HostCluster  $hostClusterName }}
+        - cluster: {{.ObjectMeta.Name }}
+        {{- end}}
       {{- end}}      
   template:
     metadata:
@@ -15,8 +20,8 @@ spec:
     spec:
       project: {{.NautesConfigs.TenantName}}
       source:
-        path: host-clusters/{{.Vcluster.HostCluster.Name}}/vclusters/{{printf "%s" "{{cluster}}"}}
-        repoURL: {{.RepoURL}}
+        path: host-clusters/{{$hostClusterName}}/vclusters/{{printf "%s" "{{cluster}}"}}
+        repoURL: {{.Repo.TenantRepoURL}}
         targetRevision: HEAD
       destination:
         server: https://kubernetes.default.svc
@@ -25,3 +30,4 @@ spec:
         automated:
           selfHeal: true
           prune: true
+{{- end -}}

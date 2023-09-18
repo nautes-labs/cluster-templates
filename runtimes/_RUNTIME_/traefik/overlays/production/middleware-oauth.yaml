@@ -11,22 +11,24 @@ spec:
     authResponseHeaders:
       - "X-Forwarded-User"
       - "Authorization"
+{{- $data := getGatewayServer . }}
+{{- range $data.Traefik.Middlewares }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: oauth-{{.Runtime.ClusterName}}
+  name: oauth-{{.OAuth.Name}}
   namespace: traefik
 spec:
   chain:
     middlewares:
-    - name: oauth-errors-{{.Runtime.ClusterName}}
+    - name: oauth-errors-{{.Errors.Name}}
     - name: oauth-forward
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: oauth-errors-{{.Runtime.ClusterName}}
+  name: oauth-errors-{{.Errors.Name}}
   namespace: traefik
 spec:
   errors:
@@ -36,4 +38,5 @@ spec:
       name: oauth2-proxy
       namespace: oauth2-proxy
       port: 80
-    query: {{printf "/oauth2/sign_in?rd=%s" .Runtime.TektonConfig.URL}}
+    query: {{printf "/oauth2/sign_in?rd=%s" .Errors.URL}}
+{{- end -}}

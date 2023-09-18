@@ -1,3 +1,6 @@
+{{- $data := getOauthProxyServer . }}
+{{- range $data.OAuth2Proxy.Ingresses -}}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,9 +11,9 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{.Runtime.TektonConfig.Host}}
+    - {{.Host}}
   rules:
-  - host: {{.Runtime.TektonConfig.Host}}
+  - host: {{.Host}}
     http:
       paths:
       - path: /oauth2
@@ -20,3 +23,4 @@ spec:
             name: oauth2-proxy
             port:
               number: 80
+{{- end -}}

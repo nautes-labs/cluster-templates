@@ -4,7 +4,7 @@ metadata:
   name: vault
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
     chart: vault
     repoURL: https://helm.releases.hashicorp.com/

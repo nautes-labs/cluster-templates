@@ -16,7 +16,7 @@ spec:
     spec:
       project: {{.NautesConfigs.TenantName}}
       source:
-        repoURL: {{.RepoURL}}
+        repoURL: {{.Repo.TenantRepoURL}}
         targetRevision: HEAD
         path: runtimes/{{printf "%s" "{{name}}-runtime"}}/initial/overlays/production
       destination:

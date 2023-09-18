@@ -1,10 +1,11 @@
+{{- $data := getGatewayServer .}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: traefik
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
     chart: traefik
     repoURL: https://helm.traefik.io/traefik
@@ -22,9 +23,9 @@ spec:
           traefik:
             port: 9000
           web:
-            nodePort: {{.Traefik.HttpNodePort}}
+            nodePort: {{$data.Traefik.HttpNodePort}}
           websecure:
-            nodePort: {{.Traefik.HttpsNodePort}}
+            nodePort: {{$data.Traefik.HttpsNodePort}}
             tls:
               enabled: true
         providers:

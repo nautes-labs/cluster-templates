@@ -1,3 +1,4 @@
+{{- $data := getDeploymentServer . }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,7 +6,7 @@ metadata:
   name: argocd-cm
 data:
   kustomize.buildOptions: --load-restrictor LoadRestrictionsNone
-  url: {{.Runtime.ArgocdConfig.URL}}
+  url: {{$data.Argocd.URL}}
   dex.config: |
     connectors:
       - type: oidc

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{printf "%s-vcluster-app" .Vcluster.Name}}
+  name: {{printf "%s-vcluster-app" .Cluster.ObjectMeta.Name}}
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io  
@@ -36,7 +36,7 @@ spec:
             enabled: true
         syncer:
           extraArgs:
-          - --tls-san={{.Vcluster.TLSSan}}
+          - --tls-san={{.HostCluster | getVclusterTLSSan}}
         init:
           manifests: |-
             ---
@@ -64,8 +64,8 @@ spec:
                 name: vault-auth
                 namespace: vault            
   destination:
-    server: {{.Vcluster.HostCluster.ApiServer}}
-    namespace: {{.Vcluster.Namespace }}
+    server: {{.HostCluster.Spec.ApiServer}}
+    namespace: {{.Cluster.Name}}
   syncPolicy:
     automated:
       selfHeal: true

@@ -11,7 +11,7 @@ data:
       gitType: {{.GitConfigs.GitType}}
     secret:
       vault:
-        mountPath: "{{.Runtime.MountPath}}"
+        mountPath: "{{.Cluster.ObjectMeta.Name}}"
         addr: "{{.SecretConfigs.Vault.Addr}}"
         CABundle: |
 {{- range $line := split .SecretConfigs.Vault.CABundle "\n" }}

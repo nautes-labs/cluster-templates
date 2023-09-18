@@ -1,3 +1,4 @@
+{{- $data := getPipelineServer . -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -5,13 +6,13 @@ metadata:
   namespace: tekton-pipelines
   annotations:
     kubernetes.io/ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/router.middlewares: "traefik-oauth-{{.Runtime.ClusterName}}@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "traefik-oauth-{{.Cluster.ObjectMeta.Name}}@kubernetescrd"
 spec:
   tls:
   - hosts:
-    - {{.Runtime.TektonConfig.Host}}
+    - {{$data.Tekton.Hosts}}
   rules:
-  - host: {{.Runtime.TektonConfig.Host}}
+  - host: {{$data.Tekton.Hosts}}
     http:
       paths:
       - path: /

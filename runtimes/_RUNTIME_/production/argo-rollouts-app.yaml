@@ -4,10 +4,10 @@ metadata:
   name: argo-rollouts
   namespace: argocd
 spec:
-  project: {{.Runtime.ArgocdConfig.Project}}
+  project: {{.Cluster.ObjectMeta.Name}}-runtime-project
   source:
     path: argorollouts/overlays/production
-    repoURL: {{.RepoURL}}
+    repoURL: {{.Repo.TenantRepoURL}}
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
